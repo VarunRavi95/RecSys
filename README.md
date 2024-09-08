@@ -4,7 +4,9 @@ This project showcases a Real Estate Listing Recommender application using a con
 
 ## Demo
 
-![Demo GIF](./demo-gif.gif)
+<p align="center">
+  <img src="./demo-gif.gif" alt="Demo GIF">
+</p>
 
 ## Features
 
