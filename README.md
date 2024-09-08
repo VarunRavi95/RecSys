@@ -43,7 +43,11 @@ This project showcases a Real Estate Listing Recommender application using a con
 1. Install dependencies:
    ```bash
    npm install
-   
+
+2. Navigate to the app folder:
+   ```bash
+   cd my-react-app
+
 2. Start the React application:
    ```bash
    npm start
