@@ -27,8 +27,8 @@ This project showcases a Real Estate Listing Recommender application using a con
 
 1. Clone the repository:
    ```bash
-   git clone <repository-url>
-   cd <repository-name>
+   git clone https://github.com/VarunRavi95/RecSys
+   cd RecSys
 
 2. Install dependencies
    ```bash
