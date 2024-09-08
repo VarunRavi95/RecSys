@@ -1,1 +1,1 @@
-![Demo GIF](./demo.gif)
+![Demo GIF](./demo-gif.gif)
