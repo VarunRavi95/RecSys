@@ -12,7 +12,7 @@ function App() {
 
     const handleSearch = async () => {
         try {
-            const response = await axios.post('https://recsys-nl1e.onrender.com', { query });
+            const response = await axios.post('http://127.0.0.1:5000/recommend', { query });
             setRecommendations(Array.isArray(response.data) ? response.data : []);
         } catch (error) {
             console.error("Error fetching recommendations:", error);
