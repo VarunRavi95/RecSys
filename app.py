@@ -28,7 +28,7 @@ index = faiss.IndexFlatL2(embeddings.shape[1])
 index.add(embeddings)
 
 # Define the recommendation endpoint
-@app.route('/recommend', methods=['POST', 'OPTIONS'])
+@app.route('/recommend', methods=['GET', 'POST', 'OPTIONS'])
 def recommend():
     if request.method == 'OPTIONS':
         # Send an empty response with the appropriate headers
