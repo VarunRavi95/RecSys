@@ -20,15 +20,15 @@ def after_request(response):
 
 # Load data and model
 df = pd.read_csv('processed_listings_with_original_descriptions.csv')
-embeddings = np.load('listings_embeddings.npy').astype('float32')
-model = SentenceTransformer('sentence-transformers/all-mpnet-base-v2')
+embeddings = np.load('combined_embeddings.npy').astype('float32')
+model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
 
 # Set up FAISS index
 index = faiss.IndexFlatL2(embeddings.shape[1])
 index.add(embeddings)
 
 # Define the recommendation endpoint
-@app.route('/recommend', methods=['GET', 'POST', 'OPTIONS'])
+@app.route('/recommend', methods=['POST', 'OPTIONS'])
 def recommend():
     if request.method == 'OPTIONS':
         # Send an empty response with the appropriate headers
@@ -37,7 +37,12 @@ def recommend():
     data = request.json
     query = data.get('query')
     query_embedding = model.encode([query]).astype('float32')
-    distances, indices = index.search(query_embedding, 20)
+
+    # Padding query embeddings to match the dimension of combined embeddings
+    query_embedding_padded = np.pad(query_embedding, (0, embeddings.shape[1] - query_embedding.shape[1]), 'constant')
+
+    distances, indices = index.search(query_embedding_padded.reshape(1, -1), 20)
+
     # Handle NaN values in the DataFrame by converting them to None (which will be converted to null in JSON)
     recommendations = df.iloc[indices[0]].replace({np.nan: None}).to_dict(orient='records')
     return jsonify(recommendations)
