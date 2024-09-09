@@ -8,7 +8,7 @@ from sentence_transformers import SentenceTransformer
 app = Flask(__name__)
 
 # Set up CORS to allow requests from your React app
-CORS(app, resources={r"/recommend": {"origins": "*"}}, supports_credentials=True)
+CORS(app, resources={r"/recommend": {"origins": "http://127.0.0.1:5000/recommend"}}, supports_credentials=True)
 
 @app.after_request
 def after_request(response):
