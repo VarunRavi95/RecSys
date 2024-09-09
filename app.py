@@ -38,10 +38,13 @@ def recommend():
     query = data.get('query')
     query_embedding = model.encode([query]).astype('float32')
 
-    # Padding query embeddings to match the dimension of combined embeddings
-    query_embedding_padded = np.pad(query_embedding, (0, embeddings.shape[1] - query_embedding.shape[1]), 'constant')
+    # Padding only if the query embedding is smaller in dimension than the index
+    if query_embedding.shape[1] < embeddings.shape[1]:
+        query_embedding = np.pad(query_embedding, ((0, 0), (0, embeddings.shape[1] - query_embedding.shape[1])), 'constant')
+    elif query_embedding.shape[1] > embeddings.shape[1]:
+        query_embedding = query_embedding[:, :embeddings.shape[1]]
 
-    distances, indices = index.search(query_embedding_padded.reshape(1, -1), 20)
+    distances, indices = index.search(query_embedding, 20)
 
     # Handle NaN values in the DataFrame by converting them to None (which will be converted to null in JSON)
     recommendations = df.iloc[indices[0]].replace({np.nan: None}).to_dict(orient='records')
