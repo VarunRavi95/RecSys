@@ -10,7 +10,7 @@ This project showcases a Real Estate Listing Recommender application using a con
 
 ## Features
 
-- **Content-Based Filtering:** Recommends listings based on the semantic similarity of the user's query and listing descriptions using a sentence transformer model.
+- **Content-Based Filtering:** Recommends listings based on the semantic similarity of the user's query and listing descriptions and past user reviews, using a sentence transformer model.
 - **Interactive Frontend:** A React frontend with a clean, professional look and feel, showcasing the recommendations in a user-friendly interface.
 - **Backend API:** A Flask backend serving the recommendation results, optimized for performance using FAISS for similarity search.
 - **Deployment:** The application is set up for local testing and is demonstrated via a hosted GIF in the README.
