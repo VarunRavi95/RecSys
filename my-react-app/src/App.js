@@ -9,7 +9,7 @@ import "slick-carousel/slick/slick-theme.css";
 function App() {
     const [query, setQuery] = useState('');
     const [recommendations, setRecommendations] = useState([]);
-recsys-ruddy.vercel.app
+
     const handleSearch = async () => {
         try {
             const response = await axios.post('http://recsys-ruddy.vercel.app/recommend', { query });
