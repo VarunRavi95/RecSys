@@ -22,7 +22,7 @@ def after_request(response):
 df = pd.read_csv('processed_listings_with_original_descriptions.csv')
 
 # Load the saved hybrid embeddings
-embeddings = np.load('hybrid_embeddings.npy').astype('float32')
+embeddings = np.load('combined_embeddings.npy').astype('float32')
 
 # Load the sentence transformer model
 model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
