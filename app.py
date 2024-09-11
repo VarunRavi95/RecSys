@@ -8,12 +8,12 @@ from sentence_transformers import SentenceTransformer
 app = Flask(__name__)
 
 # Set up CORS to allow requests from any origin
-CORS(app, resources={r"/recommend": {"origins": "https://recsys-ruddy.vercel.app/recommend"}}, supports_credentials=True)
+CORS(app, resources={r"/recommend": {"origins": r"https://.*\.vercel\.app"}})
 
 @app.after_request
 def after_request(response):
     # Add necessary CORS headers for handling preflight and actual requests
-    response.headers.add('Access-Control-Allow-Origin', 'https://recsys-ruddy.vercel.app/recommend')
+    response.headers.add('Access-Control-Allow-Origin', '*')
     response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
     response.headers.add('Access-Control-Allow-Methods', 'GET,POST,OPTIONS')
     return response
@@ -31,8 +31,13 @@ index.add(embeddings)
 @app.route('/recommend', methods=['POST', 'OPTIONS'])
 def recommend():
     if request.method == 'OPTIONS':
-        # Send an empty response with the appropriate headers
-        return jsonify(status="OK"), 200
+        # Handle preflight request
+        response = jsonify(status="OK")
+        response.headers.add('Access-Control-Allow-Origin', '*')  # Update with specific logic for more precise control
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+        response.headers.add('Access-Control-Allow-Methods', 'GET,POST,OPTIONS')
+        return response, 200
+
 
     data = request.json
     query = data.get('query')
