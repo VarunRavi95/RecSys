@@ -13,7 +13,7 @@ CORS(app, resources={r"/recommend": {"origins": "https://recsys-ruddy.vercel.app
 @app.after_request
 def after_request(response):
     # Add necessary CORS headers for handling preflight and actual requests
-    response.headers.add('Access-Control-Allow-Origin', 'https://recsys-ruddy.vercel.app')
+    response.headers.add('Access-Control-Allow-Origin', 'https://recsys-ruddy.vercel.app/recommend')
     response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
     response.headers.add('Access-Control-Allow-Methods', 'GET,POST,OPTIONS')
     return response
