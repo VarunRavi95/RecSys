@@ -8,7 +8,7 @@ from sentence_transformers import SentenceTransformer
 app = Flask(__name__)
 
 # Set up CORS to allow requests from any origin
-CORS(app, resources={r"/recommend": {"origins": r"https://.*\.vercel\.app"}})
+CORS(app, resources={r"/recommend": {"origins": "*"}}, supports_credentials=True)
 
 @app.after_request
 def after_request(response):
@@ -20,7 +20,11 @@ def after_request(response):
 
 # Load data and model
 df = pd.read_csv('processed_listings_with_original_descriptions.csv')
-embeddings = np.load('combined_embeddings.npy').astype('float32')
+
+# Load the saved hybrid embeddings
+embeddings = np.load('hybrid_embeddings.npy').astype('float32')
+
+# Load the sentence transformer model
 model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
 
 # Set up FAISS index
@@ -31,23 +35,19 @@ index.add(embeddings)
 @app.route('/recommend', methods=['POST', 'OPTIONS'])
 def recommend():
     if request.method == 'OPTIONS':
-        # Handle preflight request
-        response = jsonify(status="OK")
-        response.headers.add('Access-Control-Allow-Origin', '*')  # Update with specific logic for more precise control
-        response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
-        response.headers.add('Access-Control-Allow-Methods', 'GET,POST,OPTIONS')
-        return response, 200
-
+        # Send an empty response with the appropriate headers
+        return jsonify(status="OK"), 200
 
     data = request.json
     query = data.get('query')
     query_embedding = model.encode([query]).astype('float32')
 
-    # Ensure query embedding matches the dimension of index embeddings
-    if query_embedding.shape[1] < embeddings.shape[1]:
-        query_embedding = np.pad(query_embedding, ((0, 0), (0, embeddings.shape[1] - query_embedding.shape[1])), 'constant')
-    elif query_embedding.shape[1] > embeddings.shape[1]:
-        query_embedding = query_embedding[:, :embeddings.shape[1]]
+    # Ensure query embedding matches the dimension of index embeddings (768)
+    target_dim = embeddings.shape[1]
+    if query_embedding.shape[1] < target_dim:
+        query_embedding = np.pad(query_embedding, ((0, 0), (0, target_dim - query_embedding.shape[1])), 'constant')
+    elif query_embedding.shape[1] > target_dim:
+        query_embedding = query_embedding[:, :target_dim]
 
     # Perform the search using FAISS
     distances, indices = index.search(query_embedding, 20)
