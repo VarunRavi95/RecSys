@@ -8,12 +8,12 @@ from sentence_transformers import SentenceTransformer
 app = Flask(__name__)
 
 # Set up CORS to allow requests from any origin
-CORS(app, resources={r"/recommend": {"origins": "https://recsys-q9vowcafl-varunravi95s-projects.vercel.app"}}, supports_credentials=True)
+CORS(app, resources={r"/recommend": {"origins": "https://recsys-ruddy.vercel.app"}}, supports_credentials=True)
 
 @app.after_request
 def after_request(response):
     # Add necessary CORS headers for handling preflight and actual requests
-    response.headers.add('Access-Control-Allow-Origin', 'https://recsys-q9vowcafl-varunravi95s-projects.vercel.app')
+    response.headers.add('Access-Control-Allow-Origin', 'https://recsys-ruddy.vercel.app')
     response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
     response.headers.add('Access-Control-Allow-Methods', 'GET,POST,OPTIONS')
     return response
