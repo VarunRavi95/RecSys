@@ -8,7 +8,7 @@ from sentence_transformers import SentenceTransformer
 app = Flask(__name__)
 
 # Set up CORS to allow requests from any origin
-CORS(app, resources={r"/recommend": {"origins": "https://recsys-ruddy.vercel.app"}}, supports_credentials=True)
+CORS(app, resources={r"/recommend": {"origins": "https://recsys-ruddy.vercel.app/recommend"}}, supports_credentials=True)
 
 @app.after_request
 def after_request(response):
