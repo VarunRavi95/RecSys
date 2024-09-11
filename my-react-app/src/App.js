@@ -12,7 +12,7 @@ function App() {
 
     const handleSearch = async () => {
         try {
-            const response = await axios.post('https://recsys-ruddy.vercel.app/recommend', { query });
+            const response = await axios.post('https://recsys-q9vowcafl-varunravi95s-projects.vercel.app', { query });
             setRecommendations(Array.isArray(response.data) ? response.data : []);
         } catch (error) {
             console.error("Error fetching recommendations:", error);
