@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import './App.css';
-
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -9,20 +8,13 @@ import "slick-carousel/slick/slick-theme.css";
 function App() {
     const [query, setQuery] = useState('');
     const [recommendations, setRecommendations] = useState([]);
-    const [error, setError] = useState('');
-
-    // Backend URL can be set using an environment variable if supported by Vercel
-    const backendUrl = process.env.REACT_APP_BACKEND_URL || 'https://recsys-ruddy.vercel.app/recommend';
 
     const handleSearch = async () => {
-        setError(''); // Reset error state before making a request
         try {
-            // Ensure the backend URL points to the correct endpoint
-            const response = await axios.post(backendUrl, { query });
+            const response = await axios.post('http://127.0.0.1:5000/recommend', { query });
             setRecommendations(Array.isArray(response.data) ? response.data : []);
         } catch (error) {
             console.error("Error fetching recommendations:", error);
-            setError('Failed to fetch recommendations. Please try again.');
             setRecommendations([]);
         }
     };
@@ -74,8 +66,6 @@ function App() {
                 />
                 <button onClick={handleSearch} className="btn btn-primary">Search</button>
             </div>
-
-            {error && <p className="text-center text-danger">{error}</p>}
 
             <Slider {...sliderSettings}>
                 {recommendations.length > 0 ? (
