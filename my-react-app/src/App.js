@@ -9,10 +9,10 @@ import "slick-carousel/slick/slick-theme.css";
 function App() {
     const [query, setQuery] = useState('');
     const [recommendations, setRecommendations] = useState([]);
-
+recsys-ruddy.vercel.app
     const handleSearch = async () => {
         try {
-            const response = await axios.post('http://127.0.0.1:5000/recommend', { query });
+            const response = await axios.post('http://recsys-ruddy.vercel.app/recommend', { query });
             setRecommendations(Array.isArray(response.data) ? response.data : []);
         } catch (error) {
             console.error("Error fetching recommendations:", error);
