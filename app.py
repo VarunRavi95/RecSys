@@ -8,7 +8,7 @@ from sentence_transformers import SentenceTransformer
 app = Flask(__name__)
 
 # Set up CORS to allow requests from any origin
-CORS(app, resources={r"/recommend": {"origins": "http://127.0.0.1:5000/recommend"}}, supports_credentials=True)
+CORS(app, resources={r"/recommend": {"origins": "*"}}, supports_credentials=True)
 
 @app.after_request
 def after_request(response):
@@ -18,17 +18,21 @@ def after_request(response):
     response.headers.add('Access-Control-Allow-Methods', 'GET,POST,OPTIONS')
     return response
 
-# Load data and model
+# Load data
 df = pd.read_csv('processed_listings_with_original_descriptions.csv')
 
-# Load the saved hybrid embeddings
-embeddings = np.load('combined_embeddings.npy').astype('float32')
+# Load the saved embeddings
+embeddings = np.load('gtr_t5_large_embeddings.npy').astype('float32')
+
+# Normalize embeddings
+faiss.normalize_L2(embeddings)
 
 # Load the sentence transformer model
-model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
+model = SentenceTransformer('sentence-transformers/gtr-t5-large')
 
 # Set up FAISS index
-index = faiss.IndexFlatL2(embeddings.shape[1])
+dimension = embeddings.shape[1]
+index = faiss.IndexFlatIP(dimension)
 index.add(embeddings)
 
 # Define the recommendation endpoint
@@ -38,16 +42,19 @@ def recommend():
         # Send an empty response with the appropriate headers
         return jsonify(status="OK"), 200
 
-    data = request.json
+    data = request.get_json()
     query = data.get('query')
+    if not query:
+        return jsonify({'error': 'No query provided'}), 400
+
     query_embedding = model.encode([query]).astype('float32')
 
-    # Ensure query embedding matches the dimension of index embeddings (768)
-    target_dim = embeddings.shape[1]
-    if query_embedding.shape[1] < target_dim:
-        query_embedding = np.pad(query_embedding, ((0, 0), (0, target_dim - query_embedding.shape[1])), 'constant')
-    elif query_embedding.shape[1] > target_dim:
-        query_embedding = query_embedding[:, :target_dim]
+    # Normalize the query embedding
+    faiss.normalize_L2(query_embedding)
+
+    # Ensure query embedding matches the dimension of index embeddings
+    if query_embedding.shape[1] != embeddings.shape[1]:
+        return jsonify({'error': 'Query embedding dimension does not match embeddings dimension'}), 400
 
     # Perform the search using FAISS
     distances, indices = index.search(query_embedding, 20)
